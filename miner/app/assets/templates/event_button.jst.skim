@@ -1,0 +1,2 @@
+p
+  button.btn.btn-primary= "#{@name} [#{@id}]"

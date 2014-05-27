@@ -16,6 +16,8 @@
 #= require underscore
 #= require backbone
 #= require backbone.marionette
+#= require skim
+#= require_tree ../templates
 #= require_tree .
 #= require websocket_rails/main
 
@@ -27,7 +29,7 @@ class WebsocketRailsAdapter
   constructor: (@_dispatcher) ->
 
   emit: (eventName, data) ->
-    @_dispatcher.trigger event_name, data
+    @_dispatcher.trigger eventName, data
 
   on: (eventName, callback) ->
     @_dispatcher.bind eventName, callback
@@ -57,12 +59,24 @@ class MetricsRecorder
 window.startApp = (appName) ->
   window.appToRun = appName
 
+Marionette.Renderer.render = (template, data) ->
+  return unless template?
+
+  if typeof template is "function"
+    template(data)
+  else
+    JST[template](data)
+
 chooseApplicationToRun =  (socket) ->
   console.log "chooseApplicationToRun"
   switch window.appToRun
     when Applications.SIMULATOR
-      window.App = new Simulator socket
-      App.start()
+      window.App = new Marionette.Application
+      App.socket = socket
+      App.addRegions mainRegion: '#event-buttons'
+      App.module 'Simulation', Simulation
+      App.start(socket)
+
     when Applications.LIVE_DISPLAY
       console.log "Starting #{appName}"
     else

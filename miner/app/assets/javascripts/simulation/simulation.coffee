@@ -4,7 +4,8 @@ window.Simulation = (Mod, App, Backbone, Marionette, $, _) ->
 
   Mod.addInitializer ->
     console.log "Creating MetricsEvents"
-    @eventModels = _.map EVENTS, (eventName, index) -> new MetricsEvent name: eventName, id: index+1
+    @eventModels = _.map EVENTS, (eventName, index) ->
+      new MetricsEvent name: eventName, id: index+1, originator_type: 'Visitor', originator_id: $.cookie('visitor_id')
     @eventCollection = new MetricsCollection @eventModels
     # Register global keyup listener for num-keys
     ($ document).on 'keyup', (event) =>
@@ -17,10 +18,12 @@ window.Simulation = (Mod, App, Backbone, Marionette, $, _) ->
     App.mainRegion.show new ButtonList collection: @eventCollection
 
   class MetricsEvent extends Backbone.Model
+    url: '/metrics_events'
+
     occur: ->
       console.log "It occured: #{@get 'name'}"
-      App.socket.emit 'met'
-      @trigger 'occur'
+      App.socket.emit 'metrics_event', @attributes
+      @trigger 'happened'
 
   class MetricsCollection extends Backbone.Collection
     userPicked: (modelId) ->
@@ -35,12 +38,13 @@ window.Simulation = (Mod, App, Backbone, Marionette, $, _) ->
       click: '_onClick'
 
     initialize: ->
-      @model.on 'occur', @_highlight
+      @model.on 'happened', @_highlight
 
     onClose: ->
 
     _highlight: =>
       @$el.fadeTo(100, 0.5).fadeTo(100, 1)
+
     _onKeyup: (event) ->
       console.log "There was keyup", event.which
       @model.occur()

@@ -4,8 +4,11 @@ Rails.application.routes.draw do
   resources :visitors do
     get 'simulate'
   end
+
+  # resources :metrics_events
+  post '/metrics_events', to: 'metrics_events#create'
+
   get 'dashboard/index'
   get '/new_simulation', to: 'visitors#new_simulation'
-  get 'metrics_events/create'
   match '/about', to: 'application#about', via: :get
 end

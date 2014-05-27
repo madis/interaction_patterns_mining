@@ -1,6 +1,6 @@
-class MetricsEventsController < WebsocketRails::BaseController
+class MetricsEventsController < ApplicationController
   def create
-    p "Wadiis #{params}"
-    WebsocketRails[:data_updated].trigger 'new', latest_post
+    puts "Create new? #{params}"
+    # WebsocketRails[:data_updated].trigger 'new'
   end
 end

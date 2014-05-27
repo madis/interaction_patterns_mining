@@ -9,5 +9,6 @@ class VisitorsController < ApplicationController
 
   def simulate
     @visitor = Visitor.find(params[:visitor_id])
+    cookies[:visitor_id] = @visitor.id
   end
 end

@@ -16,6 +16,7 @@
 #= require underscore
 #= require backbone
 #= require backbone.marionette
+#= require jquery.cookie
 #= require skim
 #= require_tree ../templates
 #= require_tree .

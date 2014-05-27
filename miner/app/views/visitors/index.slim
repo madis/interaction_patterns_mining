@@ -1,4 +1,22 @@
-coffee:
-  startApp(Applications.LIVE_DISPLAY)
-
 h1 Visitors#index
+
+table.table.table-striped
+  thead
+    th #
+    th Visitor name
+    th Number of events
+    th Rank (if were on the page)
+    th Actions
+  tbody
+    - @visitors.each do |v|
+      tr
+        td= v.id
+        td= v.name
+        td= v.metrics_events.count
+        td= v.rank
+        td
+          a href="#{visitor_simulate_path(v)}"
+            .btn.btn-primary Simulate
+
+
+

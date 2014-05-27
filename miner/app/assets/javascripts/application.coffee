@@ -78,9 +78,9 @@ chooseApplicationToRun =  (socket) ->
       App.start(socket)
 
     when Applications.LIVE_DISPLAY
-      console.log "Starting #{appName}"
+      console.log "Starting #{appToRun}"
     else
-      console.log "Unknown appliction #{window.appName}"
+      console.log "Unknown appliction #{window.appToRun}"
 
 $ ->
   console.log "Document ready"

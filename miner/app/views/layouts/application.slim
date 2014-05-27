@@ -3,7 +3,7 @@ html lang="en"
   head
     meta charset="utf-8"
     meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"
-    title= "Title"
+    title= "Visitor rank"
     meta name="description" content=""
     meta name="author" content=""
     meta name="keywords" content=""
@@ -16,8 +16,12 @@ html lang="en"
       = navbar_header brand: 'Visitor rank'
       = navbar_collapse do
         = navbar_group class: 'foo', id: 'menu' do
-          = navbar_item 'Online visitors', '/visitors'
-          = navbar_item 'Simulate', '/simulate'
-          = navbar_item 'About', '/about'
+          = navbar_item 'Dashboard', dashboard_index_path
+          = navbar_item 'Visitors', visitors_path
+          - if @visitor.present?
+            = navbar_item 'Simulate (new visitor)', visitor_simulate_path(@visitor)
+          - else
+            = navbar_item 'Simulate (new visitor)', new_simulation_path
+          = navbar_item 'About', about_path
     .container
       = yield

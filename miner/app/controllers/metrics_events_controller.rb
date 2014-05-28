@@ -1,6 +1,6 @@
 class MetricsEventsController < ApplicationController
   def create
     puts "Create new? #{params}"
-    # WebsocketRails[:data_updated].trigger 'new'
+    EventHubClient.register_event params
   end
 end

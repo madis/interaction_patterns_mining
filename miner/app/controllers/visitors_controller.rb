@@ -8,7 +8,6 @@ class VisitorsController < ApplicationController
   end
 
   def destroy
-    binding.pry
     visitor = Visitor.find(params[:id])
     respond_to do |format|
       if visitor.present?
@@ -22,6 +21,17 @@ class VisitorsController < ApplicationController
 
   def new_simulation
     redirect_to visitor_simulate_path(Visitor.create!)
+  end
+
+  def show
+    visitor = Visitor.find(params[:id])
+    respond_to do |format|
+      if visitor.present?
+        format.json { render json: visitor}
+      else
+        format.json { head :not_found }
+      end
+    end
   end
 
   def simulate

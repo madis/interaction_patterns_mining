@@ -12,4 +12,5 @@ WebsocketRails::EventMap.describe do
   #   end
   # The above will handle an event triggered on the client like `product.new`.
   subscribe :metrics_event, 'events#create'
+  subscribe :client_connected, 'events#client_connected'
 end

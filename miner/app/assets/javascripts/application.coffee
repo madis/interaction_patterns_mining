@@ -77,7 +77,7 @@ chooseApplicationToRun =  (socket) ->
 
 $ ->
   console.log "Document ready"
-  window.dispatcher = new WebSocketRails 'localhost:3000/websocket'
+  window.dispatcher = new WebSocketRails "#{window.location.host}/websocket"
   console.log "got dispatcher", dispatcher
   dispatcher.on_open = ->
     console.log "Websocket connection ready"

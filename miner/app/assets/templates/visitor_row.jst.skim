@@ -1,0 +1,5 @@
+td= @rank
+td= "#{@name || 'Visitor #' + @id}"
+td= @metrics_events.length
+td
+  button.btn.btn-danger.btn-sm.delete Delete

@@ -13,6 +13,7 @@ window.Simulation = (Mod, App, Backbone, Marionette, $, _) ->
         @eventCollection.userPicked(event.which - (NUM_KEY_OFFSET+1))
 
       console.log "Got keyup", event.which
+
   Mod.on 'start', ->
     console.log "Ze event models are", @eventCollection
     App.mainRegion.show new ButtonList collection: @eventCollection

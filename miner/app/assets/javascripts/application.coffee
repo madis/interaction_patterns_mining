@@ -69,17 +69,18 @@ Marionette.Renderer.render = (template, data) ->
     JST[template](data)
 
 chooseApplicationToRun =  (socket) ->
-  console.log "chooseApplicationToRun"
+  window.App = new Marionette.Application
+  App.socket = socket
+  App.addRegions mainRegion: '#main-region'
+
   switch window.appToRun
     when Applications.SIMULATOR
-      window.App = new Marionette.Application
-      App.socket = socket
-      App.addRegions mainRegion: '#event-buttons'
       App.module 'Simulation', Simulation
       App.start(socket)
-
     when Applications.LIVE_DISPLAY
-      console.log "Starting #{appToRun}"
+      console.log "Starting live display"
+      App.module 'LiveDisplay', LiveDisplay
+      App.start(socket)
     else
       console.log "Unknown appliction #{window.appToRun}"
 

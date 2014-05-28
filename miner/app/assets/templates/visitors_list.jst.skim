@@ -1,0 +1,8 @@
+table.table.table-striped.table-bordered.table-hover
+  thead
+    th Rank
+    th Name
+    th Events
+    th Action
+  tbody.visitor-rows
+

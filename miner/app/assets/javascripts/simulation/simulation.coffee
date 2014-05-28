@@ -1,26 +1,28 @@
 window.Simulation = (Mod, App, Backbone, Marionette, $, _) ->
   SOCKET_CHANNEL = 'simulation'
 
-  EVENTS = ['visit_payment_form', 'read_contact_information', 'click_link', 'make_a_search_on_the_page', 'select_phone_number', 'scroll']
   NUM_KEY_OFFSET = 47
 
-  Mod.addInitializer ->
-    console.log "Creating MetricsEvents"
-    @eventModels = _.map EVENTS, (eventName, index) ->
-      new MetricsEvent name: eventName, id: index+1, originator_type: 'Visitor', originator_id: $.cookie('visitor_id')
-    @eventCollection = new MetricsCollection @eventModels
-
-    # Register global keyup listener for num-keys
-    ($ document).on 'keyup', (event) =>
-      if [1..9].indexOf(event.which - NUM_KEY_OFFSET) > 0
-        @eventCollection.userPicked(event.which - (NUM_KEY_OFFSET+1))
-
-      console.log "Got keyup", event.which
-
   Mod.on 'start', ->
-    console.log "Ze event models are", @eventCollection
-    @socket = App.socket.joinChannel SOCKET_CHANNEL
-    App.mainRegion.show new ButtonList collection: @eventCollection
+    (new EventNames).fetch success: (names) =>
+      @eventModels = _.map names.attributes, (eventName, index) =>
+        console.log "Mapping", eventName, index
+        new MetricsEvent name: eventName, id: parseInt(index)+1, originator_type: 'Visitor', originator_id: $.cookie('visitor_id')
+      console.log "Creating collection", @eventModels
+      @eventCollection = new MetricsCollection @eventModels
+
+      # Register global keyup listener for num-keys
+      ($ document).on 'keyup', (event) =>
+        if [1..9].indexOf(event.which - NUM_KEY_OFFSET) > 0
+          @eventCollection.userPicked(event.which - (NUM_KEY_OFFSET+1))
+
+        console.log "Got keyup", event.which
+      console.log "Ze event models are", @eventCollection
+      @socket = App.socket.joinChannel SOCKET_CHANNEL
+      App.mainRegion.show new ButtonList collection: @eventCollection
+
+  class window.EventNames extends Backbone.Model
+    url: '/metrics_events/names'
 
   class MetricsEvent extends Backbone.Model
     url: '/metrics_events'

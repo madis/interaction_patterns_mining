@@ -3,7 +3,7 @@ window.LiveDisplay = (Mod, App, Backbone, Marionette, $, _) ->
 
   Mod.addInitializer ->
     @visitors = new OnlineVisitors []
-    @visitors.fetch()
+    @visitors.fetch success: => @visitors.sort()
 
   Mod.on 'start', ->
     @listView = new VisitorsList collection: @visitors
@@ -22,8 +22,16 @@ window.LiveDisplay = (Mod, App, Backbone, Marionette, $, _) ->
     url: '/visitors.json'
     model: Visitor
 
-    comparator: (model, another) ->
-      model.get 'rank' > another.get 'rank'
+    comparator: (another, one) ->
+      rank1 = one.get 'rank'
+      rank2 = another.get 'rank'
+      console.log "Comparing #{rank1} vs #{rank2}"
+      if rank1 == rank2
+        0
+      else if rank1 > rank2
+        1
+      else
+        -1
 
     # TODO: Later use visual effect similar to
     # http://stackoverflow.com/questions/1851475/using-jquery-how-to-i-animate-adding-a-new-list-item-to-a-list
@@ -33,9 +41,10 @@ window.LiveDisplay = (Mod, App, Backbone, Marionette, $, _) ->
         console.log "Looking for id=#{id} rank=#{rank} models=", @models
         model = @findWhere {id: rank.id}
         @remove model
-        console.log "Setting ranking from #{model.get('rank')} to #{rank}"
+        console.log "Setting ranking from #{model.get('rank')} to #{rank.score}"
         model.set 'rank', rank.score
         @add model
+        @sort()
 
     onDestroy: (model) ->
       console.log "Removing model", model
@@ -51,6 +60,9 @@ window.LiveDisplay = (Mod, App, Backbone, Marionette, $, _) ->
     _handleDelete: ->
       @model.destroy()
 
+    # serializeData: ->
+    #   name: @get 'name'
+    #   rank: @collection
   class VisitorsList extends Marionette.CompositeView
     template: 'visitors_list'
     className: 'visitors_list'
@@ -62,7 +74,8 @@ window.LiveDisplay = (Mod, App, Backbone, Marionette, $, _) ->
       @collection.on 'change', @render
 
     appendHtml: (collectionView, itemView, index) ->
-      console.log "appending "
+      console.log "appending"
+      # $(this.itemViewContainer).append(itemView.el)
       if collectionView.isBuffering
         collectionView._bufferedChildren.push(itemView)
 

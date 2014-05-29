@@ -4,6 +4,7 @@ class CreateMetricsEventsForVisitor < ActiveRecord::Migration
       t.string :name
       t.integer :originator_id
       t.string :originator_type
+      t.string :event_type
       t.timestamps
     end
 

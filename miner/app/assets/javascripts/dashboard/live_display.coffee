@@ -11,6 +11,8 @@ window.LiveDisplay = (Mod, App, Backbone, Marionette, $, _) ->
     @socket = App.socket.joinChannel SOCKET_CHANNEL
     console.log "Socketo: ", @socket
     @socket.on 'new_rankings', @visitors.applyNewRankings
+    @socket.on 'new_visitor', (visitorAttributes) =>
+      @visitors.add new Visitor visitorAttributes
 
   class Visitor extends Backbone.Model
     initialize: ->
@@ -27,11 +29,12 @@ window.LiveDisplay = (Mod, App, Backbone, Marionette, $, _) ->
     # http://stackoverflow.com/questions/1851475/using-jquery-how-to-i-animate-adding-a-new-list-item-to-a-list
     applyNewRankings: (rankings) =>
       console.log "Applying new rankings", rankings
-      _.each rankings, (id, rank) =>
-        model = @findWhere {id: id}
+      _.each rankings, (rank, id) =>
+        console.log "Looking for id=#{id} rank=#{rank} models=", @models
+        model = @findWhere {id: rank.id}
         @remove model
         console.log "Setting ranking from #{model.get('rank')} to #{rank}"
-        model.set 'rank', rank
+        model.set 'rank', rank.score
         @add model
 
     onDestroy: (model) ->

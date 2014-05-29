@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   # resources :metrics_events
   post '/metrics_events', to: 'metrics_events#create'
+  get '/metrics_events/names', to: 'metrics_events#names'
 
   get 'dashboard/index'
   get '/new_simulation', to: 'visitors#new_simulation'

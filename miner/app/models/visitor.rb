@@ -2,7 +2,11 @@ class Visitor < ActiveRecord::Base
   has_many :metrics_events, as: :originator, dependent: :destroy
 
   def rank
-    0
+    if metrics_events.count > 0
+      EventHubClient.ranker.score(metrics_events.map(&:name))
+    else
+      0
+    end
   end
 
   def as_json(options={})

@@ -1,8 +1,5 @@
 class EventHubClient
-  module Channels
-    SIMULATION = :simulation
-    DASHBOARD = :dashboard
-  end
+
 
   def self.register_event(attributes)
     puts "Wut?"
@@ -14,15 +11,35 @@ class EventHubClient
   rescue Exception => e
     puts "Perse #{e}"
   ensure
+    send_new_rankings
+  end
+
+  def self.send_new_rankings
+    puts "Sending new rankings"
     when_rankings_ready do |rankings|
       puts "Triggering to dashboard"
-      WebsocketRails[Channels::DASHBOARD].trigger 'new_rankings', rankings
+      SocketMessenger.send_rankings rankings
     end
   end
 
   def self.when_rankings_ready
-    rankings = Visitor.all.map(&:id).shuffle
-    puts "Calculating rankings #{rankings}"
-    yield rankings
+    scores = Visitor.all.map { |v| {id: v.id, score: ranker.score(v.metrics_events.map(&:name))} }
+    yield scores
+  rescue Exception => e
+    puts "Midagi on kannis #{e}"
+  end
+
+  def self.ranker
+    if @ranking.blank?
+      @ranking = Ranking::NaiveBayes.new
+      train
+    end
+
+    @ranking
+  end
+
+  def self.train
+    @ranking.train_good(%w(visit_payment_form read_contact_information select_phone_number))
+    @ranking.train_bad(%w(random_stuff scroll do_nothing_for_a_while))
   end
 end

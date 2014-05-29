@@ -20,7 +20,9 @@ class VisitorsController < ApplicationController
   end
 
   def new_simulation
-    redirect_to visitor_simulate_path(Visitor.create!)
+    visitor = Visitor.create!
+    SocketMessenger.send_new_visitor(visitor)
+    redirect_to visitor_simulate_path(visitor)
   end
 
   def show

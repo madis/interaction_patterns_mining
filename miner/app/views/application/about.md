@@ -19,3 +19,23 @@ class Wadiis
   end
 end
 ```
+
+## Developed prototype
+
+### Creating the learning dataset for testing
+
+- user starts new learning session
+- generate events by clicking buttons or number keys
+- mark the sequence as good or bad
+
+### Simulating live visitors
+
+- web page for generating different events
+- events are sent to server over *WebSocket*
+- data is stored into database
+
+### Notifying agent of the results
+
+- VisitorRank module calculates new ordering as event data is received
+- updated rankings are pushed to the online sales agents
+- in browser the agent's visitor list is ordered based on updated info
